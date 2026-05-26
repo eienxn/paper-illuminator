@@ -78,36 +78,6 @@ The single consolidated file is structured as:
 - Appendix C: Claim ledger (evidence provenance table)
 - Appendix D: Summary card (10 fields)
 
-### Evidence Provenance Rule (core quality constraint)
-
-Every load-bearing claim and every figure is tagged with one of:
-
-- `[paper-reported]` — from the paper text/figure/table directly
-- `[repo-inspected]` — from the official repo code/config
-- `[reproduced]` — you actually ran it locally
-- `[synthetic-demo]` — a toy/teaching demo (encouraged, first-class)
-- `[interpretation]` — your inference/framing (must use hedge language)
-
-This lets readers immediately know whether they're looking at the paper's real evidence or your teaching scaffolding. **Toy demos are encouraged, not discouraged** — just tag them honestly.
-
-### Figure budget (deep + fig=on)
-
-Functional categories with minimum counts:
-
-| Category | min |
-|---|---|
-| Paper figure/table walkthrough (paper-reported) | ≥4 |
-| Worked example / numerical walkthrough (synthetic-demo) | ≥3 |
-| Architecture / data flow / training flow | ≥3 |
-| Results / ablation / failure mode (paper-reported) | ≥3 |
-| Real-data / repo-inspected (if accessible) | ≥1 |
-| Motivation comparison (3-panel: ground truth vs alternative vs paper's choice) | ≥2 |
-| Toolchain unfurling toy (2×2 toy at step D of each core math tool) | ≥2 |
-| Running-example flow figure (one figure with running value annotated at each stage of the pipeline) | ≥1 (if paper has a pipeline) |
-| §1 background concept illustration (geometric intuition / concept-relationship map / analogy figure / neighboring-concept side-by-side, **at least one per non-trivial §1 prerequisite**) | ≥3 |
-
-Minimum total: **23** when the paper has a pipeline (22 without). Cap: **35**. Sweet spot: **25–30**. Quality over count — every figure must answer a question the reader actually has; don't pad with decorative redraws.
-
 ### Why `deep + fig=on` is the default recommendation
 
 | Setting | When it's useful | When it's wasted |
