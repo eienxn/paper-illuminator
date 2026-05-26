@@ -171,17 +171,38 @@ When `--flow-style mermaid` is forced, use mermaid even for architecture. Defaul
 
 After every figure embed in the deep note, **immediately** follow with prose reading. No bare embeds.
 
-Template:
+### 6.0 Pre-write checklist (hard requirement for paper figures)
+
+Before writing **any** caption for a figure in `source-figures/` (extracted paper figures, especially `--with_ori`):
+
+1. **Read the PNG with the Read tool.** Look at what's actually drawn — node labels, panel layout, color coding, presence/absence of components. Never write the caption from memory or from "what a generic figure of this type looks like". (Failure mode: writing "左侧 trajectory 灰条 + encoder $E$ 紫方块" for a figure that contains neither — visual hallucination.)
+2. **Catalog the literal symbols.** List every variable name that appears in the figure (e.g. `z_{t_1}, l_{t_1}, \hat{z}_{t_2}, a_{t_1}`). Your caption MUST use these exact symbols, not the paper text's abstract substitutes (e.g. don't write `t_k, t_{k+1}, t_{k+2}` when the figure shows `t_1, t_2, t_3`). If a generalization helps, add it as a supplement: "general form: $t_k, t_{k+1}, ...$; figure shows the concrete instance $t_1, t_2, t_3$."
+3. **Catalog what's NOT drawn.** If the figure omits a component you'd expect (encoder, rollout-loss arm, decoder, etc.), say so explicitly. Don't fill it in from your mental model.
+
+This is the **Symbol Mirror + Visual Verification** rule, codified in SKILL.md rule #5.
+
+### 6.1 Template
+
 ```markdown
 ![title](figures/NN_xxx.png)
 
-**[provenance tag]** Panel-by-panel reading:
-- **Left panel**: ${what is shown / axes / color coding / key number}
-- **Right panel**: ${...}
-- **Key insight / the one number to remember**: ${...}
+**[provenance tag]** Panel-by-panel reading (symbols match figure as labeled):
+- **Top / Bottom / Left / Right node `<symbol from figure>`**: what is shown / what role it plays
+- **Box `<exact box label>`**: the operation it represents, e.g. `P^{(2)}_\phi` takes (z, l) → ẑ
+- **Arrows**: what flows where (e.g. action chunk → action encoder → l_{t_1})
+- **Absent components** (if any expected): "Note: no encoder $E$ shown in this figure — it's absorbed upstream in the data prep stage. (See §X.Y for where $E$ acts.)"
+- **Key takeaway / one number to remember**: ${...}
 ```
 
 For single-panel figures, list at least 3 elements (axes / colors / annotations / key numbers).
+
+### 6.2 Post-write check
+
+After writing, re-read your caption and verify:
+- [ ] Every symbol in the caption appears verbatim in the figure
+- [ ] Every layout claim ("左侧 …", "顶部 …") matches the actual figure layout
+- [ ] If you described a component (box / arrow / annotation), it exists in the figure
+- [ ] If the figure omits something, you noted the omission rather than silently filling it in
 
 ---
 

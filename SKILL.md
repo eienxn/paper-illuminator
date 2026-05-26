@@ -1,7 +1,7 @@
 ---
 name: paper-illuminator
 description: "Deeply read and explain a single academic paper like a patient tutor — mine unfamiliar concepts, build a glossary inline, generate many visual explanations, walk through every non-trivial step with analogies and simple worked examples. Outputs ONE consolidated markdown file that reads like a textbook chapter, with explicit evidence-provenance tags on every claim. Works across domains (theory, ML, wet-lab, systems, empirical). Use when user says \"deep read paper\", \"explain this paper\", \"help me really understand X paper\", \"paper tutor\", \"读这篇论文\", \"讲讲这篇 paper\", \"帮我吃透 X 论文\", or wants to genuinely understand a paper rather than just get a summary."
-argument-hint: "<paper-url-or-path> [--depth skim|middle|deep] [--fig on|off] [--out DIR] [--context \"...\"] [--flow-style matplotlib|mermaid] [--lang english|chinese|...] [--iter N] [--multi-file]"
+argument-hint: "<paper-url-or-path> [--depth skim|middle|deep] [--fig on|off] [--out DIR] [--context \"...\"] [--flow-style matplotlib|mermaid] [--lang english|chinese|...] [--iter N] [--with_ori] [--html] [--multi-file]"
 allowed-tools: Bash(*), Read, Write, Edit, Grep, Glob, WebFetch, WebSearch, Agent
 ---
 
@@ -15,6 +15,7 @@ Deeply read and **explain** an academic paper. **Input** is a paper (arXiv URL /
 > - `references/mining_playbooks.md` — Step A/B/C/D mining framework, loaded per paper domain
 > - `references/teaching_moves.md` — 8 teaching moves (anchor / lego toy / phenomenon demo / counter-intuitive dialogue / multi-view / real-data evidence / etc.)
 > - `references/figure_contract.md` — figure functional budget + visual style spec + **Evidence Provenance Rule** (core quality rule)
+> - `references/prose_style.md` — read-aloud-test rules for writing tutor-style prose (universal + Chinese / English specific)
 
 ---
 
@@ -35,6 +36,21 @@ Deeply read and **explain** an academic paper. **Input** is a paper (arXiv URL /
 **4. Evidence provenance is non-negotiable.** Every load-bearing claim and every figure must be tagged with one of: `[paper-reported]` / `[repo-inspected]` / `[reproduced]` / `[synthetic-demo]` / `[interpretation]`. Never write "measured", "proves", "demonstrates", "core finding" without a clear source. See `figure_contract.md` §1 and the deep_note template appendix C (claim ledger).
 
    **Note**: `[synthetic-demo]` is a fully respected tag — it tells the reader "this is a toy I made to make the mechanism visible, not the paper's own data". A figure clearly tagged synthetic-demo is *better* than a figure that lies by silently dressing up toy data as real evidence. **Tag honestly, then toy freely.**
+
+**5. Visual verification + Symbol Mirror for paper figures.** When writing the panel-by-panel reading of an **extracted paper figure** (anything in `source-figures/`, especially `--with_ori` figures), you **MUST**:
+   - **(a) Read the actual PNG with the Read tool BEFORE writing the caption.** Never describe a paper figure from memory or "what a generic figure of this type would look like". Visual hallucination (describing a layout that isn't there) is a hard failure mode — see the HWM Fig 3 incident: prose wrote "左侧 trajectory 灰条 + encoder $E$ 紫方块" for a figure that contained neither.
+   - **(b) Mirror the figure's exact symbols.** If the figure labels nodes `z_{t_1}, z_{t_2}, z_{t_3}`, the prose says `z_{t_1}, z_{t_2}, z_{t_3}` — not the paper text's abstract `z_{t_k}, z_{t_{k+1}}, z_{t_{k+2}}`. You may add "(general form: $t_k, t_{k+1}, ...$)" as a *supplement*, but the primary description uses what's literally drawn. Mixing the figure's concrete indices with the paper text's abstract indices in the same caption is a hard failure mode.
+   - **(c) Describe what's drawn, not what should be drawn.** If the figure omits a component (e.g. encoder $E$ silent / rollout loss arm absent), say so explicitly — don't fill it in from your mental model of the full system.
+
+**6. Narrative spine — bridge between major sections.** Each major section (§1, §2, …, §6, §7) must include:
+   - **(a) A 1–2 sentence "where we came from" recap** at section start when the next section's content depends on the previous. ("§1 gave you all the prerequisites — MPC, CEM, latent WMs, AR error. §2 puts them together as HWM's core structure.")
+   - **(b) A 1-sentence "what's next" pointer** at section end. ("Now you've seen the structure; §3 walks through how to train it.")
+   - **(c) Running example continuity (§4 inference and any pipeline section).** If §4.0 sets a running example with concrete numbers, every §4.x sub-section must explicitly re-reference those numbers ("recall from §4.1 that cost converged to 0.18 — here's the toolchain behind that"). Sub-sections that introduce a fresh unrelated example mid-section break cohesion.
+   - **(d) Cross-link counter-intuitive points to their evidence.** §6 counter-intuitive items that depend on ablation evidence (e.g. latent dim sweet spot, transformer vs delta) must cite the §5.x section by number; conversely, §5 ablations that are also counter-intuitive findings should forward-link to the §6 entry.
+
+   These bridges are what turns a list of sections into a coherent narrative. **Missing bridges = "feels piecemeal" failure mode.**
+
+**7. Prose style — "read aloud" test.** The note's prose has to read like spoken explanation, not like notes / cheat sheets / table cells. Telegraphic comma-spliced fragments, dangling comparisons ("shorter than flat"), hidden bullet lists ("by (a)… and (b)…"), unverbalized symbol clusters ("H=2-5 steps"), and verbless claim fragments are all failure modes — they read like AI-compressed memos, not tutoring. See `references/prose_style.md` for the 8 universal rules + Chinese-specific / English-specific guidance + read-aloud test. Apply during writing, not as a post-pass — and never assume `writing-anti-ai` or `nature-polishing` will rescue bad prose mechanics (those skills catch AI tells, not rhythm).
 
 ---
 
@@ -67,6 +83,8 @@ Includes inline:
 - **DEFAULT_OUTPUT_DIR** = `./paper-notes/`
 - **DEFAULT_LANG** = `english`
 - **DEFAULT_ITER** = `1` (number of writing passes; values ≥2 trigger first-pass-reader self-iteration loops; capped at 4)
+- **DEFAULT_WITH_ORI** = `off` (when `on`, embed every original paper Figure/Table into the deep note at the most contextually appropriate section, each with panel-by-panel reading + connection to surrounding text)
+- **DEFAULT_HTML** = `off` (when `on`, render the final deep note as a single browser-openable `.html` file via pandoc instead of `.md`; uses MathJax for LaTeX, mermaid CDN for diagrams, syntax-highlighting for code, sticky TOC sidebar)
 - **CACHE_DIR** = `~/.cache/paper-illuminator/`
 - **ARXIV_SRC_URL_PATTERN** = replace `/abs/` with `/e-print/` to get `.tar.gz`
 
@@ -86,6 +104,8 @@ Parse from `$ARGUMENTS`:
 | `--flow-style` | `matplotlib` / `mermaid` | depth-dependent | Architecture / flow figure style. `matplotlib` is the deep-note style. |
 | `--lang` | `english` / `chinese` / any human language | `english` | Output language for all reader-facing prose (section headers, body text, figure captions, appendix entries). Code identifiers, math symbols, and provenance tags stay in their original form. |
 | `--iter` | int ≥1 (capped at 4) | `1` | Number of writing passes. `1` (default) writes the note once. `2`–`4` triggers post-write self-iteration loops: agent switches to a first-pass reader viewpoint, marks friction points in its own note, and edits the sections in-place. Each pass logs its findings into Appendix E (Self-iteration log). |
+| `--with_ori` | flag | absent | When set, every original Figure/Table in the paper must be (a) extracted into `source-figures/`, (b) embedded at the §X.Y of the deep note whose topic best matches it (not dumped into one gallery), (c) walked through panel-by-panel with provenance tag `[paper-reported, Fig N]` + a paragraph tying it to the surrounding §. Forces the agent to engage with every paper figure, which often surfaces details that would otherwise be skipped. See Step 5.4 for placement rules. |
+| `--html` | flag | absent | When set, the final deliverable is rendered as a self-contained `.html` file (instead of `.md`) via pandoc. Pipeline: agent writes the markdown as usual, then `pandoc -s --toc --toc-depth=3 --mathjax --highlight-style=tango -c style.css note.md -o note.html` produces a browser-openable single file with sticky TOC sidebar, MathJax for LaTeX, syntax-highlighted code, and a mermaid CDN init for diagrams. Image paths stay relative — ship the `figures/` and `source-figures/` directories alongside the HTML. Requires pandoc installed (`command -v pandoc` to check). See Step 6.6. |
 | `--multi-file` | flag | absent | Opt-in legacy split structure (note.md + glossary.md + questions.md). Almost never needed. |
 
 If `<paper>` is omitted, ask the user. Everything else has a default.
@@ -107,10 +127,41 @@ Decide `<paper-slug>` (e.g., `firstauthor2026_shortname`) and `<title-slug>` ear
 
 ### Step 2. Acquire paper source
 
-- **arXiv URL**: `/abs/` → `/e-print/` → curl `.tar.gz` → tar -xzf → locate `main.tex`/`paper.tex`. Also WebFetch abs page for title/authors/abstract.
-- **Local PDF**: prefer `pdf` skill; fallback `pdftotext`. Extract figures via `pdfimages -png` into `source-figures/`.
-- **Local .tex dir**: read directly.
-- **Repo**: search for repo URL in abstract / intro / footnote. If found, fetch README via `gh repo view` or WebFetch.
+- **Text & metadata**:
+  - **arXiv URL**: `/abs/` → `/e-print/` → curl `.tar.gz` → tar -xzf → locate `main.tex`/`paper.tex`. Also WebFetch abs page for title/authors/abstract.
+  - **Local PDF**: prefer `pdf` skill; fallback `pdftotext`.
+  - **Local .tex dir**: read directly.
+  - **Repo**: search for repo URL in abstract / intro / footnote. If found, fetch README via `gh repo view` or WebFetch.
+
+- **Figure extraction — fallback chain (try in order, log which one worked, stop at first success per figure)**:
+
+  | # | Method | Best for | Quality | How |
+  |---|---|---|---|---|
+  | **1** | arXiv `.tar.gz` source figure files | arXiv papers | highest (lossless original) | locate `figures/`, `figs/`, `images/` or `*.{pdf,png,jpg,eps}` files inside the extracted tarball; copy into `source-figures/` |
+  | **2** | Official repo's `figures/` / `assets/` / `paper/` dirs | papers with public GitHub repo | highest | `gh repo clone` or sparse-checkout the figure dir; many authors upload the paper-quality images |
+  | **3** | arXiv HTML render at `ar5iv.labs.arxiv.org/html/<id>` | any arXiv paper | high | WebFetch the HTML, parse `<img>` tags, download the PNG/SVG URLs — figures are already extracted by ar5iv |
+  | **4** | `pdffigures2` (Allen AI Java tool, region-aware) | any PDF | high | `pdffigures2 paper.pdf -o source-figures/ -i 0` — detects figure regions + captions intelligently. Needs Java + sbt; `command -v pdffigures2` to check |
+  | **5** | `pdfimages -png paper.pdf source-figures/img` | any PDF | medium | extracts embedded bitmaps; misses vector/LaTeX-drawn figures; multi-panel figures get split into sub-files |
+  | **6** | `pdftoppm -png -r 200 -f <page> -l <page>` (or `pdftocairo`) per-page render | vector/LaTeX-drawn figures #5 missed | medium (page-screenshot) | identify the page containing the missed figure (via `pdftotext` + text search for the caption), render that page; may need post-crop |
+  | **7** | Publisher supplementary materials (Nature/IEEE/Springer/ACM) | journal papers with separate hi-res figure downloads | high | check the publisher landing page for "supplementary materials" / "source data" links |
+  | **8** | Manual screenshot from PDF viewer | scanned/encrypted PDFs / everything else failed | varies | last-resort: ask the user to screenshot the figure(s) and place into `source-figures/` |
+
+  **Implementation pattern** for each figure that needs extraction:
+  ```
+  for method in [arxiv_tarball, official_repo, ar5iv_html, pdffigures2,
+                 pdfimages, pdftoppm_render, publisher_supplementary]:
+      if method.available() and method.extract(figure_N) == success:
+          log(f"figure {N} extracted via {method.name}")
+          break
+  else:
+      log(f"figure {N} MANUAL EXTRACTION REQUIRED — note this in Appendix A")
+  ```
+
+  **Naming**: regardless of method, rename outputs to include figure number, e.g. `paper_fig3_attention.png` / `paper_tab2_results.png` — makes the file greppable when writing the deep note.
+
+**Extraction policy by `--with_ori`**:
+- `--with_ori off` (default): only extract figures you actually plan to embed (typically the ≥4 paper-figure walkthroughs in the figure budget). Skip the rest.
+- `--with_ori on`: extract **every** Figure and Table from the paper using the fallback chain above. Build a complete inventory (used by Step 5.4). For any figure where all 7 automated methods fail (method 8 needs user), log it in Appendix A audit with the methods tried.
 
 ### Step 3. Plan the deep structure (for deep mode)
 
@@ -171,6 +222,35 @@ Total minimum: **23 figures** when the paper has a pipeline (22 without). **Cap*
 
 **Sub-step 5.3 — Every figure gets a provenance tag + panel-by-panel prose walkthrough** (see `figure_contract.md` §6).
 
+**Sub-step 5.4 — `--with_ori` placement rules** (only when `--with_ori` is set):
+
+When `--with_ori` is set, **every** paper Figure/Table identified in the Sub-step 5.1 audit must be embedded into the deep note. The placement is **contextual**, not append-to-appendix:
+
+1. **Assign each Figure/Table to its natural home** based on its topic, not its position in the paper:
+   - Architecture / overview figure → §2.1 (Method overview)
+   - Component-level diagram → §2.X (the matching component subsection)
+   - Training pipeline / loss curve → §3 (Training details)
+   - Inference flow / rollout figure → §4 (Inference / execution details)
+   - Main results table / headline benchmark → §5 (Evaluation and findings)
+   - Ablation figure / sensitivity sweep → §5 (the ablation subsection)
+   - Failure-mode visualization → §7 (Pitfalls) or §6 (Counter-intuitive points), whichever fits
+   - Conceptual / motivation figure → §1 (Background) or §2.0 (Motivation walkthrough)
+   - Supplementary figure that doesn't fit anywhere obvious → embed in **Appendix F (Supplementary paper figures)** with a one-line note on what the paper used it for
+
+2. **Each embedded paper figure must have**:
+   - Provenance tag: `[paper-reported, Fig N]` or `[paper-reported, Tab N]`
+   - Panel-by-panel reading (per `figure_contract.md` §6)
+   - **A connecting paragraph** that ties the figure to the surrounding text — what does §X.Y's argument look like in this figure? what does the figure let the reader see that the prose can't say? This is the "the figure gets used, not just shown" rule.
+   - The figure's `Notable detail / hidden assumption / counter-intuitive thing` if any (the *point* of `--with_ori` is that being forced to walk every figure surfaces details the agent would otherwise skip).
+
+3. **De-duplication**: if two paper figures show essentially the same thing in different visual forms (e.g., bar chart and table of the same ablation), embed the more informative one and reference the other in one line.
+
+4. **Cap and overflow**: hard cap **30 paper figures embedded in the body**. If the paper has >30 figures (long surveys / benchmark papers), embed the top 30 by load-bearing-ness and put the rest in Appendix F as a one-image-per-row gallery with one-line captions.
+
+5. **Update Appendix A audit** to reflect that every paper figure was embedded (mark each row with `→ §X.Y` instead of `skip`).
+
+6. **Interaction with figure budget** (`figure_contract.md` §2): `--with_ori` typically pushes the paper-figure-walkthrough count well above the ≥4 floor (which is fine). The custom-figure categories (architecture / motivation / toolchain toy / running example / §1 background) **still apply unchanged** — `--with_ori` adds paper figures *on top of* the custom figures, it does not replace them.
+
 ### Step 6. Write the consolidated main file
 
 Follow `templates/deep_note.md`. Keep the final self-check from that template — it's the writing-time gate.
@@ -200,6 +280,18 @@ Writing the note and reading the note are different cognitive modes. After writi
    - *"This figure has no provenance tag / no panel-by-panel reading."* → violates `figure_contract.md` §1 and §6.
    - *"The text says 'demonstrates' / 'shows' / 'proves' but there's no source nearby."* → rule #4 violation; add hedge or source.
    - *"Acronym appeared without first-mention definition."* → not in Appendix B glossary; fix.
+   - *"The figure shows `t_1, t_2, t_3` but the caption keeps saying `t_k, t_{k+1}, t_{k+2}` — which is right?"* OR *"The caption describes a 'left trajectory bar' but I don't see one in the figure"* → **Symbol Mirror / Visual Verification violation (rule #5)**. Re-open the PNG; rewrite the caption to use literal symbols + literal layout.
+   - *"This section feels like a re-statement of the previous one — I'm not learning anything new"* → section overlap (e.g. §2.5 recapping §2.0). Merge, cross-link, or delete.
+   - *"How does this section connect to the previous one? Why am I here now?"* → missing section bridge (rule #6). Add a 1-2 sentence "where we came from / what's next" hinge.
+   - *"§4.0 set up a concrete running example but §4.3 introduces fresh numbers I don't recognize"* → running-example discontinuity (rule #6c). Re-thread §4.x sub-sections through the §4.0 numbers.
+   - *"§6 lists a counter-intuitive point but doesn't tell me which experiment/figure backs it up"* OR *"§5 ablation surprised me but the §6 chapter doesn't list it"* → §5↔§6 cross-link missing (rule #6d).
+   - *"This sentence has 3 commas and no verb — it reads like a spec-sheet row"* → rule #7 / prose_style 1.1 violation. Rewrite into 1-2 sentences each with subject + verb + object.
+   - *"I had to mentally translate `H=2-5` into 'two to five' to parse the sentence"* → rule #7 / prose_style 1.2 violation. Verbalize the parameter; keep the symbol in parens as supplement.
+   - *"Shorter than flat — flat's what?"* OR *"better than X — better at what?"* → dangling comparison, rule #7 / prose_style 1.3 violation. Complete the comparison.
+   - *"(a) … + (b) … inside one sentence reads like a bullet list crammed in"* → rule #7 / prose_style 1.4 violation. Promote to real bullets or fully verbalize ("一是 …; 二是 …" / "first … second …").
+   - *"Why is this sentence right after the previous one? What's the logical relation?"* → rule #7 / prose_style 1.6 violation. Add connective (因此/换言之/反过来 / Therefore/In other words/By contrast).
+   - *"This paragraph reads like a table cell, not speech"* → rule #7 read-aloud test failed. Rewrite per `references/prose_style.md`.
+   - *"中英 code-switch 每 3 个字一次, 我大脑卡了"* → rule #7 / prose_style 2.1 violation. Align switches with phrase boundaries; don't cut predicates between languages.
 
 3. **Edit the existing sections in-place** to fix each friction point. **Do not append fixes as new sub-sections or addenda** — the reader on iteration N should see a smooth narrative, not a patch log. The patch log lives in Appendix E (next step), not in the body.
 
@@ -212,6 +304,100 @@ Writing the note and reading the note are different cognitive modes. After writi
 - Hard cap: 4 iterations total (i.e., `--iter > 4` is treated as 4).
 - A self-iteration pass that adds no fixes is allowed; record "0 friction points" in Appendix E and stop. Do not invent fixes to look busy.
 - Self-iteration **only edits §1–§7 body and figures**. Appendices A–D should already be settled by the first pass; do not rewrite them in self-iteration unless a body fix forces a glossary or claim-ledger update.
+
+### Step 6.6. (only if `--html` is set) Render markdown → HTML
+
+After Step 6 (and Step 6.5 self-iteration if `--iter ≥ 2`) finishes producing the consolidated markdown file, run the pandoc render pipeline.
+
+#### Preflight
+
+- `command -v pandoc` to check pandoc is installed. If missing, stop with a clear message: "pandoc not found; install via `brew install pandoc` (macOS) / `apt-get install pandoc` (Linux) and re-run, or omit `--html` to keep the markdown deliverable."
+
+#### Render command
+
+```bash
+pandoc \
+  -s \
+  --toc --toc-depth=3 \
+  --mathjax \
+  --highlight-style=tango \
+  --metadata title="<title>" \
+  -c style.css \
+  -o "<title>_explained.html" \
+  "<title>_explained.md"
+```
+
+Notes:
+- `-s` produces standalone HTML (full `<html><head><body>`).
+- `--toc --toc-depth=3` puts a table of contents at the top; depth 3 catches §X.Y.Z.
+- `--mathjax` adds the MathJax CDN script so `$...$` and `$$...$$` render as math.
+- `--highlight-style=tango` (or `pygments`, `kate`, `breezedark`) for syntax-highlighted code blocks.
+- `-c style.css` links a small custom stylesheet (see below). If you want a single-file deliverable with no external deps, add `--embed-resources --standalone` and inline the CSS into the same file (larger but copy-pasteable).
+
+#### Filename suffix follows `--lang`
+
+- `--lang english` (default): `<title>_explained.html`
+- `--lang chinese`: `<title>详解.html`
+- Other languages: locale-appropriate suffix (e.g. `_erklart.html` for German).
+
+#### Custom stylesheet `style.css`
+
+Generate next to the HTML file. Aim for **comfortable long-form reading** — sticky TOC sidebar on wide screens, max-width body for line length, dark-mode friendly. A reasonable starting point:
+
+```css
+:root { --fg: #1a1a1a; --bg: #fefefe; --accent: #2c5aa0; --code-bg: #f4f4f4; --muted: #666; }
+@media (prefers-color-scheme: dark) {
+  :root { --fg: #e8e8e8; --bg: #1a1a1a; --accent: #7bb3ff; --code-bg: #2a2a2a; --muted: #999; }
+}
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", sans-serif; line-height: 1.65; color: var(--fg); background: var(--bg); max-width: 820px; margin: 2rem auto; padding: 0 1.5rem; }
+h1, h2, h3, h4 { line-height: 1.25; margin-top: 2rem; }
+h1 { border-bottom: 2px solid var(--accent); padding-bottom: 0.3rem; }
+h2 { border-bottom: 1px solid #ddd; padding-bottom: 0.2rem; }
+img { max-width: 100%; height: auto; display: block; margin: 1rem auto; }
+code { background: var(--code-bg); padding: 0.15em 0.4em; border-radius: 3px; font-size: 0.92em; }
+pre code { background: none; padding: 0; }
+pre { background: var(--code-bg); padding: 1rem; border-radius: 6px; overflow-x: auto; }
+blockquote { border-left: 4px solid var(--accent); padding-left: 1rem; color: var(--muted); margin-left: 0; }
+table { border-collapse: collapse; margin: 1rem 0; }
+th, td { border: 1px solid #ddd; padding: 0.5rem 0.75rem; }
+th { background: var(--code-bg); }
+#TOC { position: sticky; top: 1rem; max-height: calc(100vh - 2rem); overflow-y: auto; font-size: 0.9em; }
+@media (min-width: 1200px) {
+  body { max-width: 1100px; display: grid; grid-template-columns: 250px 1fr; gap: 2rem; }
+  #TOC { grid-column: 1; }
+  body > *:not(#TOC) { grid-column: 2; }
+}
+.provenance-tag { font-family: monospace; font-size: 0.85em; color: var(--accent); }
+```
+
+#### Mermaid support
+
+If the deep note has mermaid blocks (when `--flow-style mermaid`), inject the mermaid init script into the head via pandoc's `-H header.html`:
+
+```html
+<!-- header.html -->
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true, theme: 'default' });
+</script>
+```
+
+Then: `pandoc ... -H header.html ...`. The default markdown ```` ```mermaid ```` blocks become `<pre class="mermaid">` after pandoc — mermaid.js will render them client-side.
+
+#### Image paths
+
+Keep image references relative (`figures/01_xxx.png`, `source-figures/paper_fig3.png`). The HTML file expects the `figures/` and `source-figures/` directories to sit next to it. **Do not** rewrite paths to absolute — that breaks portability.
+
+For maximum portability (single-file deliverable that survives email / Slack), use `--embed-resources --standalone` to base64-inline all images, CSS, and MathJax. Caveat: file size balloons (a 25-figure note → 5–20MB), and re-rendering becomes slower.
+
+#### Output
+
+When `--html` is set, the **primary deliverable** is the `.html` file. The intermediate `.md` is kept on disk next to it (for re-renders / editing); do not delete it.
+
+#### Self-check after render
+
+- Open the HTML in a browser (or `python3 -m http.server` if relative paths need a server) — verify (a) TOC renders, (b) math displays, (c) figures load, (d) mermaid blocks render if any, (e) code highlighting works.
+- If math doesn't render: check that `$...$` wasn't accidentally written as `\(...\)` somewhere; pandoc with `--mathjax` expects dollar-sign delimiters.
 
 ### Step 7. Update INDEX.md
 
@@ -265,6 +451,9 @@ If sibling paper-slug notes exist, grep for shared keywords and add cross-links 
 18. **Using the `--iter` self-iteration loop as an excuse to write a careless first pass.** The no-assumed-knowledge baseline applies on iteration 1 — iter ≥ 2 is for catching subtle gaps the writer couldn't see, not for filling in things the writer knew to explain but skipped. A note where iter=1 violates the baseline is a failure even if iter=2 fixes it.
 19. **Pipeline exposition without a running example.** If the paper has an end-to-end flow (training, inference, iterative algorithm, protocol, proof chain), and the deep note presents it stage-by-stage with no single concrete dataset traveling through all stages — the reader has to mentally invent their own numbers at each transition. Use `teaching_moves.md` #11: one running example, same numbers carried end-to-end.
 20. **Switching numbers mid-running-example.** Stage 1 uses `z = (0.3, -0.5)`, then Stage 3 randomly switches to `z = (1.0, 1.0)` without saying why — the reader can't connect the stages. Pick one set of toy numbers and carry them to the end.
+21. **With `--with_ori`, skipping any paper Figure/Table.** Every figure and table from the paper must be embedded and walked through somewhere in the body (cap 30; overflow → Appendix F). "I didn't think Figure 7 was important enough" is not a valid reason — the whole point of `--with_ori` is forcing engagement with every visual the authors chose to include.
+22. **With `--with_ori`, dumping all paper figures into one gallery.** Placement must be contextual — each figure goes to the §X.Y its topic matches (per Step 5.4). A gallery at the end of the note is the lazy fallback Appendix F, used only for figures that genuinely don't fit a body section.
+23. **With `--with_ori`, embedding figures without a connecting paragraph.** The "the figure gets used, not just shown" rule: each embedded paper figure needs (a) panel-by-panel reading, (b) a paragraph tying it to the surrounding text's argument. Just dropping the image with the paper's original caption is insufficient.
 
 ---
 

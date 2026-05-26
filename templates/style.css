@@ -1,0 +1,628 @@
+/*
+  paper-illuminator HTML stylesheet — v3 (Catppuccin palette)
+  Light: Catppuccin Latte | Dark: Catppuccin Mocha
+  Beautiful in both modes, harmonious section colors.
+*/
+
+:root {
+  /* ===== Catppuccin Latte (light mode) — Round 2 ===== */
+  --bg-page: #e9ecf2;        /* slightly cooler page bg for more card lift */
+  --bg-card: #ffffff;
+  --bg-sub:  #eef0f5;
+  --fg:      #4c4f69;
+  --fg-soft: #5c5f77;
+  --fg-muted:#7c7f93;
+  --border:  #dce0e8;
+  --border-soft: #ccd0da;
+  --code-bg: #f3f4f8;
+  --code-fg: #4c4f69;
+
+  --accent: #1e66f5;
+
+  /* Section banner accents — slightly desaturated for Round 2 */
+  --c-1: #2d6cdc;  /* blue (toned down from #1e66f5) */
+  --c-2: #8839ef;  /* mauve */
+  --c-3: #e8590c;  /* peach (slightly muted) */
+  --c-4: #1a8b91;  /* teal */
+  --c-5: #3d9527;  /* green (slightly muted) */
+  --c-6: #c0273a;  /* red */
+  --c-7: #c97676;  /* flamingo */
+  --c-8: #6c6f85;
+  --c-9: #1cabc8;  /* sky */
+  --c-0: #6c7ddc;  /* lavender */
+
+  /* Callouts */
+  --callout-warn-bg:   #fdf6e3;
+  --callout-warn-edge: #df8e1d;  /* yellow */
+  --callout-info-bg:   #eef5fc;
+  --callout-info-edge: #1e66f5;  /* blue */
+  --callout-tip-bg:    #ebf5ee;
+  --callout-tip-edge:  #40a02b;  /* green */
+
+  /* Tag pill colors (light mode) */
+  --tag-paper-bg:   #e0ebfd;  --tag-paper-fg:   #1e3a8a;  --tag-paper-edge:   #b3c7f4;
+  --tag-repo-bg:    #ece1f9;  --tag-repo-fg:    #5e29b8;  --tag-repo-edge:    #d3bef0;
+  --tag-repro-bg:   #dff0d8;  --tag-repro-fg:   #2d6a18;  --tag-repro-edge:   #b8dba8;
+  --tag-synth-bg:   #faecc8;  --tag-synth-fg:   #8a5a08;  --tag-synth-edge:   #efd596;
+  --tag-interp-bg:  #f8d4dd;  --tag-interp-fg:  #94142a;  --tag-interp-edge:  #efb4be;
+
+  /* TOC sidebar */
+  --toc-bg: var(--bg-card);
+  --toc-fg: var(--fg-soft);
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(76, 79, 105, 0.06);
+  --shadow-md: 0 4px 16px rgba(76, 79, 105, 0.08);
+  --shadow-lg: 0 8px 28px rgba(76, 79, 105, 0.12);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* ===== Catppuccin Mocha (dark mode) — Round 2: better contrast ===== */
+    --bg-page: #11111b;        /* crust — darker page bg to lift cards */
+    --bg-card: #1e1e2e;        /* base */
+    --bg-sub:  #181825;        /* mantle */
+    --fg:      #cdd6f4;        /* text */
+    --fg-soft: #bac2de;
+    --fg-muted:#9399b2;
+    --border:  #313244;
+    --border-soft: #45475a;
+    --code-bg: #181825;
+    --code-fg: #cdd6f4;
+
+    --accent: #89b4fa;
+
+    /* Section banner accents (Catppuccin Mocha pastels) */
+    --c-1: #89b4fa;  /* blue */
+    --c-2: #cba6f7;  /* mauve */
+    --c-3: #fab387;  /* peach */
+    --c-4: #94e2d5;  /* teal */
+    --c-5: #a6e3a1;  /* green */
+    --c-6: #f38ba8;  /* red */
+    --c-7: #f2cdcd;  /* flamingo */
+    --c-8: #bac2de;
+    --c-9: #89dceb;  /* sky */
+    --c-0: #b4befe;  /* lavender */
+
+    --callout-warn-bg:   #312a1a;
+    --callout-warn-edge: #f9e2af;
+    --callout-info-bg:   #1a2a3f;
+    --callout-info-edge: #89b4fa;
+    --callout-tip-bg:    #1c3320;
+    --callout-tip-edge:  #a6e3a1;
+
+    --tag-paper-bg:   #1e2f57;  --tag-paper-fg:   #b3c7f4;  --tag-paper-edge:   #2d4585;
+    --tag-repo-bg:    #2a1e4a;  --tag-repo-fg:    #cba6f7;  --tag-repo-edge:    #4a3370;
+    --tag-repro-bg:   #1a3b22;  --tag-repro-fg:   #a6e3a1;  --tag-repro-edge:   #2e6038;
+    --tag-synth-bg:   #3a2d0c;  --tag-synth-fg:   #f9e2af;  --tag-synth-edge:   #6a5118;
+    --tag-interp-bg:  #4a1a25;  --tag-interp-fg:  #f38ba8;  --tag-interp-edge:  #7a2c3e;
+
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.5);
+    --shadow-lg: 0 8px 28px rgba(0,0,0,0.6);
+  }
+
+  /* Section banner text — use bg-card so colored bg + dark text reads well */
+  body > h1 { color: #1e1e2e !important; }  /* dark text on pastel bg */
+  header[id="title-block-header"] { color: #cdd6f4; }
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+
+body {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "PingFang SC",
+               "Microsoft YaHei", "Hiragino Sans GB", "Noto Sans CJK SC",
+               "Segoe UI", sans-serif;
+  background: var(--bg-page);
+  color: var(--fg);
+  line-height: 1.72;
+  font-size: 14.5px;
+  padding: 28px 16px 80px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body > * {
+  max-width: 880px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ============ Title hero ============ */
+
+header[id="title-block-header"] {
+  /* multi-stop gradient that picks up several section colors —
+     rotating through lavender, mauve, teal — more interesting than 2-stop */
+  background:
+    radial-gradient(ellipse at 0% 0%,   var(--c-0) 0%, transparent 55%),
+    radial-gradient(ellipse at 100% 0%, var(--c-2) 0%, transparent 55%),
+    radial-gradient(ellipse at 50% 100%, var(--c-4) 0%, transparent 60%),
+    linear-gradient(135deg, #3a3f6f 0%, #2a2f5a 100%);
+  color: white;
+  padding: 44px 40px 36px;
+  border-radius: 14px 14px 0 0;
+  margin-bottom: 0;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+header[id="title-block-header"]::after {
+  /* subtle decorative line + dot pattern */
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    repeating-linear-gradient(45deg, transparent 0, transparent 22px,
+                              rgba(255,255,255,0.025) 22px, rgba(255,255,255,0.025) 23px);
+  pointer-events: none;
+}
+header[id="title-block-header"] h1.title {
+  font-size: 27px;
+  font-weight: 700;
+  margin: 0;
+  padding: 0;
+  border: none;
+  color: white;
+  letter-spacing: 0.4px;
+  position: relative;
+  z-index: 1;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+header[id="title-block-header"] h1.title::before {
+  /* small "deep read" indicator */
+  content: "📖 Deep Read";
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  background: rgba(255,255,255,0.18);
+  color: rgba(255,255,255,0.95);
+  padding: 4px 10px;
+  border-radius: 12px;
+  margin-right: 14px;
+  vertical-align: middle;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+/* ============ TOC ============ */
+
+nav#TOC {
+  background: var(--toc-bg);
+  padding: 24px 28px 20px;
+  border-radius: 0 0 14px 14px;
+  border-top: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
+  margin-bottom: 28px;
+  font-size: 13px;
+  color: var(--toc-fg);
+}
+nav#TOC::before {
+  content: "📑 目录 · Contents";
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--fg-muted);
+  letter-spacing: 2px;
+  margin-bottom: 14px;
+  text-transform: uppercase;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-soft);
+}
+nav#TOC ul { list-style: none; padding-left: 0; margin: 0; }
+nav#TOC > ul > li {
+  padding: 3px 0;
+  border-left: 2px solid transparent;
+  padding-left: 10px;
+  margin-left: -10px;
+  transition: border-color 0.15s, background 0.15s;
+}
+nav#TOC > ul > li:hover { border-left-color: var(--c-2); background: var(--bg-sub); }
+nav#TOC ul ul { padding-left: 14px; margin-top: 3px; }
+nav#TOC li { margin: 1.5px 0; line-height: 1.5; }
+nav#TOC ul ul li { font-size: 12.5px; color: var(--fg-muted); }
+nav#TOC a {
+  color: var(--fg-soft);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+}
+nav#TOC > ul > li > a {
+  color: var(--fg);
+  font-weight: 600;
+  font-size: 13.5px;
+}
+nav#TOC a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* ============ Main content card pattern ============ */
+
+body > p,
+body > ul,
+body > ol,
+body > blockquote,
+body > h1,
+body > h2,
+body > h3,
+body > h4,
+body > h5,
+body > h6,
+body > pre,
+body > table,
+body > figure,
+body > hr,
+body > div.sourceCode {
+  background: var(--bg-card);
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  padding-left: 32px;
+  padding-right: 32px;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+body > p { padding-top: 0.4em; padding-bottom: 0.4em; }
+body > ul, body > ol { padding-top: 0.4em; padding-bottom: 0.4em; }
+body > blockquote { padding-top: 0; padding-bottom: 0; }
+body > pre, body > div.sourceCode { padding-top: 14px; padding-bottom: 14px; }
+
+body > *:last-child {
+  border-bottom: 1px solid var(--border);
+  border-radius: 0 0 14px 14px;
+  padding-bottom: 28px;
+  box-shadow: var(--shadow-md);
+}
+
+/* ============ Headings ============ */
+
+/* h1 = section banners — Round 2: softer, with left accent strip */
+body > h1 {
+  font-size: 20px;
+  font-weight: 700;
+  color: white;
+  background: var(--c-1);
+  padding: 16px 32px 16px 56px;
+  margin-top: 36px;
+  margin-bottom: 0;
+  border-radius: 12px 12px 0 0;
+  letter-spacing: 0.4px;
+  border-left: none;
+  border-right: none;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+}
+/* a darker stripe down the left of the banner for visual interest */
+body > h1::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  background: rgba(0,0,0,0.18);
+  border-radius: 12px 0 0 0;
+}
+/* subtle bottom highlight */
+body > h1::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: linear-gradient(90deg, rgba(0,0,0,0.18) 0%, transparent 60%);
+}
+body > h1:first-of-type { margin-top: 24px; }
+
+/* Map auto-id prefixes to section colors */
+body > h1[id^="前言"]      { background: var(--c-0); }
+body > h1[id^="第一部分"]  { background: var(--c-1); }
+body > h1[id^="第二部分"]  { background: var(--c-2); }
+body > h1[id^="第三部分"]  { background: var(--c-3); }
+body > h1[id^="第四部分"]  { background: var(--c-4); }
+body > h1[id^="第五部分"]  { background: var(--c-5); }
+body > h1[id^="第六部分"]  { background: var(--c-6); }
+body > h1[id^="第七部分"]  { background: var(--c-7); }
+body > h1[id^="第八部分"]  { background: var(--c-8); }
+body > h1[id*="附录"]      { background: var(--c-9); }
+
+/* h2 = sub-sections — left accent bar style */
+body > h2 {
+  font-size: 17px;
+  font-weight: 700;
+  padding: 26px 32px 10px 44px;
+  margin: 0;
+  color: var(--fg);
+  position: relative;
+  border-bottom: 1px solid var(--border-soft);
+}
+body > h2::before {
+  content: "";
+  position: absolute;
+  left: 32px;
+  top: 30px;
+  bottom: 14px;
+  width: 4px;
+  border-radius: 3px;
+  background: linear-gradient(180deg, var(--accent) 0%, var(--c-2) 100%);
+}
+
+/* h3 / h4 */
+body > h3 {
+  font-size: 15.5px;
+  font-weight: 600;
+  color: var(--fg);
+  padding: 20px 32px 4px;
+  margin: 0;
+}
+body > h3::before {
+  content: "◆";
+  color: var(--accent);
+  font-size: 11px;
+  margin-right: 8px;
+  vertical-align: middle;
+  opacity: 0.7;
+}
+body > h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--fg-soft);
+  padding: 14px 32px 2px;
+  margin: 0;
+}
+body > h4::before {
+  content: "▸";
+  color: var(--fg-muted);
+  font-size: 11px;
+  margin-right: 6px;
+}
+
+/* ============ Provenance-tag pills ============ */
+
+.tag {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 11px;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  line-height: 1.6;
+  vertical-align: middle;
+  white-space: nowrap;
+  border: 1px solid transparent;
+  font-family: "SF Mono", Menlo, Consolas, monospace;
+}
+.tag-paper      { background: var(--tag-paper-bg);  color: var(--tag-paper-fg);  border-color: var(--tag-paper-edge); }
+.tag-repo       { background: var(--tag-repo-bg);   color: var(--tag-repo-fg);   border-color: var(--tag-repo-edge); }
+.tag-reproduced { background: var(--tag-repro-bg);  color: var(--tag-repro-fg);  border-color: var(--tag-repro-edge); }
+.tag-synthetic  { background: var(--tag-synth-bg);  color: var(--tag-synth-fg);  border-color: var(--tag-synth-edge); }
+.tag-interp     { background: var(--tag-interp-bg); color: var(--tag-interp-fg); border-color: var(--tag-interp-edge); }
+.tag-default    { background: var(--bg-sub); color: var(--fg-muted); border-color: var(--border-soft); }
+
+/* ============ Blockquote → callout ============ */
+
+blockquote {
+  background: var(--callout-warn-bg);
+  border-left: 4px solid var(--callout-warn-edge);
+  border-radius: 0 8px 8px 0;
+  padding: 14px 20px;
+  margin: 14px 0;
+  color: var(--fg-soft);
+  font-style: normal;
+  position: relative;
+}
+blockquote p { margin: 0.35em 0; }
+blockquote p:first-child { margin-top: 0; }
+blockquote p:last-child { margin-bottom: 0; }
+body > blockquote { padding-top: 14px; padding-bottom: 14px; padding-left: 56px; padding-right: 56px; }
+body > blockquote::before {
+  content: "";
+  position: absolute;
+  left: 32px;
+  top: 14px;
+  bottom: 14px;
+  width: 4px;
+  border-radius: 2px;
+  background: var(--callout-warn-edge);
+}
+
+/* ============ Code ============ */
+
+code {
+  background: var(--code-bg);
+  color: var(--code-fg);
+  padding: 1.5px 6px;
+  border-radius: 4px;
+  font-family: "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: 0.9em;
+  border: 1px solid var(--border-soft);
+}
+
+pre {
+  background: var(--code-bg);
+  border-radius: 8px;
+  padding: 14px 18px;
+  overflow-x: auto;
+  line-height: 1.55;
+  font-size: 12.5px;
+  border: 1px solid var(--border-soft);
+  margin: 1em 0;
+}
+pre code { background: none; padding: 0; border: none; font-size: 1em; }
+body > pre { background: var(--code-bg); }
+
+div.sourceCode {
+  background: var(--code-bg);
+  border-radius: 8px;
+  margin: 1em 0;
+  border: 1px solid var(--border-soft);
+}
+div.sourceCode pre { border: none; margin: 0; padding: 14px 18px; }
+
+/* Pandoc syntax-highlighting tweaks (Tango) — soften for dark mode */
+@media (prefers-color-scheme: dark) {
+  pre code span.co { color: #6c7086; } /* comments */
+  pre code span.kw, pre code span.cf { color: #cba6f7; } /* keywords / control flow */
+  pre code span.st { color: #a6e3a1; } /* strings */
+  pre code span.dv, pre code span.fl { color: #fab387; } /* numbers */
+  pre code span.op { color: #f5c2e7; } /* operators */
+  pre code span.va { color: #cdd6f4; } /* variables */
+  pre code span.fu { color: #89b4fa; } /* functions */
+}
+
+/* ============ Tables ============ */
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1em 0;
+  font-size: 13px;
+  background: var(--bg-card);
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+thead { background: var(--bg-sub); }
+th {
+  font-weight: 700;
+  color: var(--fg-soft);
+  padding: 9px 12px;
+  text-align: left;
+  border-bottom: 2px solid var(--border);
+  font-size: 12px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-soft);
+  vertical-align: top;
+}
+tr:last-child td { border-bottom: none; }
+tbody tr:hover { background: var(--bg-sub); }
+
+body > table { background: var(--bg-card); }
+
+/* ============ Figures ============ */
+
+img { max-width: 100%; height: auto; display: block; margin: 0 auto; }
+
+figure {
+  background: var(--bg-card);
+  padding: 16px 24px;
+  margin: 16px 0;
+  text-align: center;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+figure img {
+  border-radius: 6px;
+  border: 1px solid var(--border-soft);
+  max-width: 100%;
+  background: white;  /* matplotlib outputs are usually white-bg */
+}
+figcaption {
+  margin-top: 10px;
+  font-size: 12.5px;
+  color: var(--fg-muted);
+  font-style: italic;
+  line-height: 1.55;
+}
+
+body > figure { padding-left: 32px; padding-right: 32px; padding-top: 20px; padding-bottom: 20px; }
+p > img { display: inline-block; vertical-align: middle; }
+
+/* ============ Lists ============ */
+
+ul, ol { padding-left: 1.7em; margin: 0.6em 0; }
+li { margin: 0.3em 0; }
+li > p { margin: 0.3em 0; }
+li ul, li ol { margin: 0.25em 0; }
+
+/* ============ Misc ============ */
+
+hr {
+  border: none;
+  height: 1px;
+  background: var(--border);
+  margin: 1.8em 0;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+}
+a:hover {
+  border-bottom-color: var(--accent);
+  color: var(--c-2);
+}
+
+strong { color: var(--fg); font-weight: 700; }
+em { font-style: italic; color: var(--fg-soft); }
+
+/* ============ Wide-screen: sticky TOC sidebar ============ */
+
+@media (min-width: 1200px) {
+  body {
+    padding: 28px 28px 80px;
+    max-width: 1500px;
+    margin: 0 auto;
+  }
+  nav#TOC {
+    position: fixed;
+    top: 28px;
+    left: max(28px, calc((100vw - 1500px) / 2 + 28px));
+    width: 270px;
+    max-height: calc(100vh - 56px);
+    overflow-y: auto;
+    margin: 0;
+    border-radius: 14px;
+    box-shadow: var(--shadow-md);
+    z-index: 10;
+    font-size: 12.5px;
+    padding: 18px 22px;
+    border-top: none;
+  }
+  body > header[id="title-block-header"],
+  body > p, body > ul, body > ol, body > blockquote, body > h1, body > h2, body > h3,
+  body > h4, body > pre, body > table, body > figure, body > hr, body > div.sourceCode {
+    margin-left: 310px;
+    margin-right: 0;
+    max-width: none;
+  }
+}
+
+@media (min-width: 1700px) {
+  body > header[id="title-block-header"],
+  body > p, body > ul, body > ol, body > blockquote, body > h1, body > h2, body > h3,
+  body > h4, body > pre, body > table, body > figure, body > hr, body > div.sourceCode {
+    max-width: 1100px;
+  }
+}
+
+/* ============ Math ============ */
+mjx-container { margin: 0 0.15em; }
+mjx-container[display="true"] { margin: 0.8em auto; }
+
+/* ============ Mermaid ============ */
+pre.mermaid {
+  background: transparent;
+  text-align: center;
+  padding: 1rem 0;
+  border: none;
+}
+
+/* ============ Selection ============ */
+::selection { background: var(--c-2); color: white; }
+
+/* ============ Print ============ */
+@media print {
+  body { background: white; padding: 0; }
+  body > * { box-shadow: none; border-color: #ccc; }
+  body > h1 { background: #333 !important; -webkit-print-color-adjust: exact; }
+  nav#TOC { position: static; }
+}
